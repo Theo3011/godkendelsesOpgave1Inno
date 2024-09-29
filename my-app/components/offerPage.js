@@ -1,38 +1,36 @@
+// Importer nødvendige moduler og komponenter
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Button,
-  Alert,
-  Platform,
-  StyleSheet,
-  Linking,
-} from "react-native";
+import { View, Text, Button, Alert, StyleSheet, Linking } from "react-native";
 import { getDatabase, ref, remove } from "firebase/database";
 
+// Komponent til at vise detaljerne for et tutor-tilbud
 const OfferPage = ({ navigation, route }) => {
-  const [offer, setOffer] = useState({});
+  const [offer, setOffer] = useState({}); // State til at holde det valgte tilbud
 
   useEffect(() => {
-    setOffer(route.params.offer[1]);
+    if (route.params && route.params.offer) {
+      setOffer(route.params.offer[1]); // Sætter det valgte tilbud fra ruten
+    } else {
+      Alert.alert("Ingen tilbud tilgængelig."); // Håndterer tilfælde uden data
+    }
 
+    // Rydder op ved at nulstille state når komponent unmountes
     return () => {
-      setOffer({});
+      setOffer({}); // Nulstiller state
     };
-  }, [route.params.offer]);
+  }, [route.params]);
 
   const SeeLocation = () => {
-    // Assuming location is stored under 'location' key in offer object
-    const location = offer.location; // Adjust this based on your actual structure
+    const location = offer.location; // Henter placering fra tilbuddet
     if (location) {
       const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
         location
-      )}`;
-      Linking.openURL(url).catch((err) =>
-        Alert.alert("Error", "Could not open Google Maps.")
+      )}`; // Opretter URL til Google Maps
+      Linking.openURL(url).catch(
+        (err) => Alert.alert("Error", "Could not open Google Maps.") // Håndterer fejl
       );
     } else {
-      Alert.alert("Error", "Location not found.");
+      Alert.alert("Error", "Location not found."); // Advarer hvis placering ikke findes
     }
   };
 
@@ -44,23 +42,24 @@ const OfferPage = ({ navigation, route }) => {
   };
 
   const handleOrder = async () => {
-    const id = route.params.offer[0];
+    const id = route.params.offer[0]; // Henter ID'et på tilbuddet
     const db = getDatabase();
-    const offerRef = ref(db, `TutorOffers/${id}`);
+    const offerRef = ref(db, `TutorOffers/${id}`); // Referencen til tilbuddet i databasen
 
     try {
-      await remove(offerRef);
-      Alert.alert("Din tid er blevet bestilt");
-      navigation.goBack();
+      await remove(offerRef); // Fjerner tilbuddet fra databasen
+      Alert.alert("Din tid er blevet bestilt"); // Bekræfter bestilling
+      navigation.goBack(); // Navigerer tilbage til forrige skærm
     } catch (error) {
-      Alert.alert(error.message);
+      Alert.alert(error.message); // Viser fejlbesked ved problemer
     }
   };
 
-  if (!offer) {
-    return <Text>No data</Text>;
+  if (!offer || Object.keys(offer).length === 0) {
+    return <Text>Ingen data tilgængelig</Text>; // Viser besked hvis der ikke er data for tilbuddet
   }
 
+  // Renderer UI for at vise tilbuddet
   return (
     <View style={styles.container}>
       {Object.entries(offer).map((item, index) => (
@@ -75,6 +74,7 @@ const OfferPage = ({ navigation, route }) => {
   );
 };
 
+// Definerer styles til UI-elementerne
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OfferPage;
+export default OfferPage; // Eksporterer komponenten

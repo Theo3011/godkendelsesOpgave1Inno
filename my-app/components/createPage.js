@@ -1,3 +1,4 @@
+// Importerer nødvendige moduler og komponenter
 import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
@@ -11,9 +12,11 @@ import {
 } from "react-native";
 import { getDatabase, ref, push, update } from "firebase/database";
 
+// Komponent til at tilføje eller redigere et tutor-tilbud
 const AddEditTutorOffer = ({ navigation, route }) => {
-  const db = getDatabase();
+  const db = getDatabase(); // Opretter forbindelse til Firebase-databasen
 
+  // Sørger for, at der ikke står noget i forvejen
   const initialState = {
     subject: "",
     description: "",
@@ -21,33 +24,34 @@ const AddEditTutorOffer = ({ navigation, route }) => {
     availableTime: "",
     price: "",
     location: "",
-    date: "", // Tilføj dato til initial state
+    date: "",
   };
 
-  const [newOffer, setNewOffer] = useState(initialState);
+  const [newOffer, setNewOffer] = useState(initialState); // State til at holde oplysninger om tilbuddet
 
-  // Return true if we are editing an offer
+  // Tjekker om der er redigeret på eksisterende tilbud
   const isEditOffer = route.name === "Edit Tutor Offer";
 
   useEffect(() => {
     if (isEditOffer) {
-      // Check if route.params and route.params.offer are defined
+      // Kontrollerer om der er data at redigere
       if (!route.params || !route.params.offer) {
         Alert.alert("Ingen opslag til redigering");
         return;
       }
-      const offer = route.params.offer[1];
-      setNewOffer(offer);
+      const offer = route.params.offer[1]; // Henter det eksisterende tilbud
+      setNewOffer(offer); // Opdaterer state med eksisterende tilbud
     }
 
-    // Cleanup: reset the state when navigating away
+    // Rydder op ved at nulstille state, når der navigeres væk
     return () => {
-      setNewOffer(initialState);
+      setNewOffer(initialState); // Nulstiller state til initial
     };
   }, [isEditOffer, route.params]);
 
+  // Opdaterer tekstinputfelter i tilbuddet
   const changeTextInput = (name, event) => {
-    setNewOffer({ ...newOffer, [name]: event });
+    setNewOffer({ ...newOffer, [name]: event }); // Opdaterer state med den nye værdi
   };
 
   const handleSave = async () => {
@@ -59,8 +63,9 @@ const AddEditTutorOffer = ({ navigation, route }) => {
       price,
       location,
       date,
-    } = newOffer;
+    } = newOffer; // Henter værdier fra state
 
+    // Tjekker om alle felter er udfyldt
     if (
       subject.length === 0 ||
       description.length === 0 ||
@@ -68,15 +73,15 @@ const AddEditTutorOffer = ({ navigation, route }) => {
       availableTime.length === 0 ||
       price.length === 0 ||
       location.length === 0 ||
-      date.length === 0 // Tjek om datoen er indtastet
+      date.length === 0
     ) {
       return Alert.alert("Et af felterne er tomme!");
     }
 
     try {
       if (isEditOffer) {
-        const id = route.params.offer[0]; // Ensure this is correct
-        const offerRef = ref(db, `TutorOffers/${id}`);
+        const id = route.params.offer[0]; // Henter ID'et på det tilbud, der redigeres
+        const offerRef = ref(db, `TutorOffers/${id}`); // Referencen til tilbuddet i databasen
 
         const updatedFields = {
           subject,
@@ -85,14 +90,14 @@ const AddEditTutorOffer = ({ navigation, route }) => {
           availableTime,
           price,
           location,
-          date, // Opdater datoen
+          date,
         };
 
-        await update(offerRef, updatedFields);
+        await update(offerRef, updatedFields); // Opdaterer tilbuddet i databasen
         Alert.alert("Dit tutor-opslag er nu opdateret");
-        navigation.navigate("OfferPage", { offer: newOffer });
+        navigation.navigate("OfferPage", { offer: newOffer }); // Navigerer til tilbudssiden
       } else {
-        const offersRef = ref(db, "/TutorOffers/");
+        const offersRef = ref(db, "/TutorOffers/"); // Referencen til tilbudsgruppen i databasen
         const newOfferData = {
           subject,
           description,
@@ -103,15 +108,16 @@ const AddEditTutorOffer = ({ navigation, route }) => {
           date,
         };
 
-        await push(offersRef, newOfferData);
+        await push(offersRef, newOfferData); // Tilføjer det nye tilbud til databasen
         Alert.alert("Opbevares");
-        setNewOffer(initialState);
+        setNewOffer(initialState); // Nulstiller tilbuddet til initial state
       }
     } catch (error) {
-      Alert.alert(`Fejl: ${error.message}`);
+      Alert.alert(`Fejl: ${error.message}`); // Viser fejlbesked ved problemer
     }
   };
 
+  // Renderer UI til at indtaste eller redigere et tilbud
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -121,23 +127,24 @@ const AddEditTutorOffer = ({ navigation, route }) => {
               {key.charAt(0).toUpperCase() + key.slice(1)}
             </Text>
             <TextInput
-              value={newOffer[key]}
-              onChangeText={(event) => changeTextInput(key, event)}
+              value={newOffer[key]} // Viser den nuværende værdi i inputfeltet
+              onChangeText={(event) => changeTextInput(key, event)} // Opdaterer værdien ved ændringer
               style={styles.input}
-              placeholder={`Indtast ${key}`}
-              keyboardType={key === "date" ? "default" : "default"} // Juster tastaturtype
+              placeholder={`Indtast ${key}`} // Pladsholder tekst
+              keyboardType="default" // Juster tastaturtype
             />
           </View>
         ))}
         <Button
-          title={isEditOffer ? "Gem ændringer" : "Tilføj opslag"}
-          onPress={handleSave}
+          title={isEditOffer ? "Gem ændringer" : "Tilføj opslag"} // Viser knaptekst baseret på tilstand
+          onPress={handleSave} // Håndterer gemme-funktionalitet
         />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
+// Definerer styles til UI-elementerne
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -160,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddEditTutorOffer;
+export default AddEditTutorOffer; // Eksporterer komponenten

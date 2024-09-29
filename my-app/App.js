@@ -1,4 +1,4 @@
-// basics import
+// Importerer nødvendige moduler
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
@@ -8,12 +8,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-// Komponenter for skærme
-import CreatePage from "./components/mainPage";
-import OfferPage from "./components/offerPage";
-import MainPage from "./components/createPage";
+// Importerer komponenter for de forskellige skærme
+import CreatePage from "./components/mainPage"; 
+import OfferPage from "./components/offerPage"; 
+import MainPage from "./components/createPage"; 
 
-// Firebase Config
+// Firebase-konfiguration der forbinder til database
 const firebaseConfig = {
   apiKey: "AIzaSyCLRbQdp6oSPbiceBcR1JlrYQmIBGb52_0",
   authDomain: "inno-95b61.firebaseapp.com",
@@ -25,13 +25,12 @@ const firebaseConfig = {
     "https://inno-95b61-default-rtdb.europe-west1.firebasedatabase.app",
 };
 
-// Initialize Firebase
 if (getApps().length < 1) {
-  initializeApp(firebaseConfig);
-  console.log("Firebase On!");
+  initializeApp(firebaseConfig); // starter Firebase
+  console.log("Firebase On!"); // kontrollerer at den køre.
 }
 
-// Stack Navigator
+// Definerer Stack Navigator til at håndtere navigation mellem skærme
 const Stack = createStackNavigator();
 const StackNavigation = () => {
   return (
@@ -39,12 +38,11 @@ const StackNavigation = () => {
       <Stack.Screen name="CreatePage" component={CreatePage} />
       <Stack.Screen name="OfferPage" component={OfferPage} />
       <Stack.Screen name="Edit Tutor Offer" component={MainPage} />
-      {/* MapScreen er ikke længere separat, derfor fjernes den herfra */}
     </Stack.Navigator>
   );
 };
 
-// Opret Tab Navigator
+// Definerer Tab Navigator til at skifte mellem forskellige hovedskærme
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -72,12 +70,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
