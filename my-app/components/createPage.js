@@ -19,6 +19,8 @@ const AddEditTutorOffer = ({ navigation, route }) => {
     description: "",
     tutorName: "",
     availableTime: "",
+    price: "",
+    location: "",
     date: "", // Tilføj dato til initial state
   };
 
@@ -49,13 +51,23 @@ const AddEditTutorOffer = ({ navigation, route }) => {
   };
 
   const handleSave = async () => {
-    const { subject, description, tutorName, availableTime, date } = newOffer;
+    const {
+      subject,
+      description,
+      tutorName,
+      availableTime,
+      price,
+      location,
+      date,
+    } = newOffer;
 
     if (
       subject.length === 0 ||
       description.length === 0 ||
       tutorName.length === 0 ||
       availableTime.length === 0 ||
+      price.length === 0 ||
+      location.length === 0 ||
       date.length === 0 // Tjek om datoen er indtastet
     ) {
       return Alert.alert("Et af felterne er tomme!");
@@ -71,6 +83,8 @@ const AddEditTutorOffer = ({ navigation, route }) => {
           description,
           tutorName,
           availableTime,
+          price,
+          location,
           date, // Opdater datoen
         };
 
@@ -84,7 +98,9 @@ const AddEditTutorOffer = ({ navigation, route }) => {
           description,
           tutorName,
           availableTime,
-          date, // Gem datoen
+          price,
+          location,
+          date,
         };
 
         await push(offersRef, newOfferData);

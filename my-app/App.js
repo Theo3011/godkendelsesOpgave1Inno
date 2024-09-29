@@ -21,7 +21,8 @@ const firebaseConfig = {
   storageBucket: "inno-95b61.appspot.com",
   messagingSenderId: "1043791623724",
   appId: "1:1043791623724:web:fb40e9d8ceb06df9abc389",
-  databaseURL: "https://inno-95b61-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL:
+    "https://inno-95b61-default-rtdb.europe-west1.firebasedatabase.app",
 };
 
 // Initialize Firebase
@@ -38,6 +39,7 @@ const StackNavigation = () => {
       <Stack.Screen name="CreatePage" component={CreatePage} />
       <Stack.Screen name="OfferPage" component={OfferPage} />
       <Stack.Screen name="Edit Tutor Offer" component={MainPage} />
+      {/* MapScreen er ikke længere separat, derfor fjernes den herfra */}
     </Stack.Navigator>
   );
 };
@@ -50,7 +52,7 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen
-          name="Home"
+          name="Tilgængelig Tider"
           component={StackNavigation}
           options={{
             tabBarIcon: () => <Ionicons name="home" size={20} />,
@@ -58,7 +60,7 @@ export default function App() {
           }}
         />
         <Tab.Screen
-          name="Add"
+          name="Tilføj Opslag"
           component={MainPage}
           options={{
             tabBarIcon: () => <Ionicons name="add" size={20} />,
