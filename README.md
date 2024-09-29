@@ -24,5 +24,5 @@ For at komme i gang med at køre applikationen, skal du følge de næste 4 skrid
 
 4. **start server**
    ```bash
-   npm install
+   npx expo start
    ```
